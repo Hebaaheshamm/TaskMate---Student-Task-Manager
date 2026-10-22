@@ -18,6 +18,7 @@
 .dotnet-home/
 .nuget/
 work/**
+outputs/
 **/taskmate-design-time.db
 
 # OS files
