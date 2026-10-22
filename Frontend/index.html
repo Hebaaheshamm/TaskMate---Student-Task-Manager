@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <meta name="description" content="A calmer way to stay on top of assignments, exams, and everything due next.">
+  <title>TaskMate — your semester, sorted</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main id="auth-view" class="auth-shell">
+    <section class="auth-aside" aria-label="TaskMate introduction">
+      <a class="brand brand-light" href="/" aria-label="TaskMate home">
+        <span class="brand-mark" aria-hidden="true">t</span>
+        <span>taskmate<span class="brand-dot">.</span></span>
+      </a>
+      <div class="auth-message">
+        <span class="eyebrow">YOUR SEMESTER, SORTED</span>
+        <h1>Make room for<br><em>what matters.</em></h1>
+        <p>One calm place for everything on your plate. Keep the deadlines close and the stress a little further away.</p>
+        <div class="auth-quote">
+          <div class="quote-stars" aria-label="5 stars">★★★★★</div>
+          <p>“I finally feel like I’m ahead of my week, instead of chasing it.”</p>
+          <span>— Maya, 3rd year student</span>
+        </div>
+      </div>
+      <div class="aside-doodle" aria-hidden="true"><span>✳</span><span>✳</span><span>·</span></div>
+      <p class="aside-footer">A little more focus. A lot less overwhelm.</p>
+    </section>
+
+    <section class="auth-main">
+      <div class="auth-mobile-brand brand">
+        <span class="brand-mark" aria-hidden="true">t</span><span>taskmate<span class="brand-dot">.</span></span>
+      </div>
+      <div class="auth-card">
+        <div class="auth-heading">
+          <span class="eyebrow" id="auth-eyebrow">WELCOME BACK</span>
+          <h2 id="auth-title">Good to see you.</h2>
+          <p id="auth-subtitle">Sign in and pick up right where you left off.</p>
+        </div>
+        <div class="auth-tabs" role="tablist" aria-label="Account access">
+          <button id="login-tab" class="auth-tab active" type="button" role="tab" aria-selected="true">Sign in</button>
+          <button id="register-tab" class="auth-tab" type="button" role="tab" aria-selected="false">Create account</button>
+        </div>
+        <form id="auth-form" novalidate>
+          <div id="name-field" class="field hidden">
+            <label for="auth-name">Your name</label>
+            <input id="auth-name" name="name" autocomplete="name" maxlength="80" placeholder="e.g. Alex Morgan">
+          </div>
+          <div class="field">
+            <label for="auth-email">Email address</label>
+            <input id="auth-email" name="email" type="email" autocomplete="email" maxlength="254" required placeholder="you@university.edu">
+          </div>
+          <div class="field">
+            <div class="label-row"><label for="auth-password">Password</label><span id="password-hint" class="field-hint hidden">12 characters minimum</span></div>
+            <input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" required placeholder="At least 12 characters">
+          </div>
+          <div id="auth-message" class="form-message" role="alert" hidden></div>
+          <button id="auth-submit" class="button button-primary button-wide" type="submit">
+            <span>Sign in</span><span aria-hidden="true">→</span>
+          </button>
+        </form>
+        <p class="auth-terms">By continuing, you agree to use TaskMate kindly and responsibly.</p>
+      </div>
+      <p class="auth-copyright">© <span id="year"></span> TaskMate · Made for the student in you.</p>
+    </section>
+  </main>
+
+  <div id="app-view" class="app-shell hidden">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#dashboard" aria-label="TaskMate dashboard">
+        <span class="brand-mark" aria-hidden="true">t</span><span>taskmate<span class="brand-dot">.</span></span>
+      </a>
+      <div class="workspace-label">YOUR WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <button class="nav-link active" type="button" data-view="all">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"></rect></svg>
+          <span>All tasks</span><span id="nav-total" class="nav-count">0</span>
+        </button>
+        <button class="nav-link" type="button" data-view="upcoming">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect><path d="M7.5 3.5v4M16.5 3.5v4M3.5 10h17M8 14h3M8 17h6"></path></svg>
+          <span>Upcoming</span><span id="nav-upcoming" class="nav-count muted">0</span>
+        </button>
+        <button class="nav-link" type="button" data-view="completed">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="m8.5 12 2.3 2.3 4.8-5"></path></svg>
+          <span>Completed</span>
+        </button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-tip">
+          <span class="tip-icon" aria-hidden="true">✦</span>
+          <p><strong>Small steps count.</strong><br>One task at a time is still progress.</p>
+        </div>
+        <button id="logout-button" class="profile-button" type="button">
+          <span id="avatar" class="avatar">S</span>
+          <span class="profile-copy"><strong id="profile-name">Student</strong><small id="profile-email">student@example.com</small></span>
+          <svg class="logout-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3m9-8h7a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-7"></path></svg>
+        </button>
+      </div>
+    </aside>
+
+    <section class="main-column">
+      <header class="topbar">
+        <button id="mobile-menu" class="icon-button menu-button" type="button" aria-label="Open navigation">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        </button>
+        <div class="breadcrumb"><span>Workspace</span><span class="crumb-slash">/</span><strong id="breadcrumb-current">All tasks</strong></div>
+        <div class="topbar-actions">
+          <span class="today-chip"><span class="today-dot"></span><span id="today-label"></span></span>
+          <button id="add-task-top" class="button button-primary button-small" type="button"><span class="plus">+</span><span>New task</span></button>
+        </div>
+      </header>
+
+      <main class="dashboard-content">
+        <div class="welcome-row">
+          <div><span id="welcome-date" class="eyebrow"></span><h1 id="welcome-title">A good day starts with a plan.</h1><p id="welcome-copy">Let’s see what needs your attention.</p></div>
+          <div class="welcome-spark" aria-hidden="true">✳</div>
+        </div>
+
+        <section class="stats-grid" aria-label="Task overview">
+          <article class="stat-card stat-total">
+            <div class="stat-top"><span class="stat-icon icon-lavender"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10a2 2 0 0 1 2 2v13H5v-13a2 2 0 0 1 2-2Z"></path><path d="M9 4.5v-1h6v1M8 10h8M8 14h5"></path></svg></span><span class="stat-label">Total tasks</span></div>
+            <div class="stat-value" id="stat-total">0</div><div class="stat-note">Across your semester</div>
+          </article>
+          <article class="stat-card stat-done">
+            <div class="stat-top"><span class="stat-icon icon-mint"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="m8.5 12 2.3 2.3 4.8-5"></path></svg></span><span class="stat-label">Completed</span></div>
+            <div class="stat-value" id="stat-completed">0</div><div class="stat-note"><span id="completion-percent">0%</span> of your tasks</div>
+          </article>
+          <article class="stat-card stat-upcoming">
+            <div class="stat-top"><span class="stat-icon icon-peach"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7v5l3 2"></path></svg></span><span class="stat-label">Due this week</span></div>
+            <div class="stat-value" id="stat-upcoming">0</div><div class="stat-note">Coming up in 7 days</div>
+          </article>
+          <article class="stat-card stat-overdue">
+            <div class="stat-top"><span class="stat-icon icon-rose"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 16H3l9-16Z"></path><path d="M12 9v4m0 3h.01"></path></svg></span><span class="stat-label">Needs attention</span></div>
+            <div class="stat-value" id="stat-overdue">0</div><div class="stat-note">Overdue tasks</div>
+          </article>
+        </section>
+
+        <section class="tasks-panel" aria-labelledby="tasks-heading">
+          <div class="panel-heading">
+            <div><div class="panel-title-row"><span class="section-kicker">YOUR LIST</span><span class="live-indicator"><span></span> Up to date</span></div><h2 id="tasks-heading">All tasks <span id="task-count" class="heading-count">0</span></h2></div>
+            <button id="add-task-panel" class="button button-outline button-small" type="button"><span class="plus">+</span><span>Add task</span></button>
+          </div>
+          <div class="filter-bar">
+            <label class="search-box" for="task-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4.5 4.5"></path></svg><input id="task-search" type="search" placeholder="Search your tasks" maxlength="120" autocomplete="off"><kbd>/</kbd></label>
+            <div class="filter-controls">
+              <label class="sr-only" for="status-filter">Filter by status</label><select id="status-filter"><option value="">Any status</option><option value="ToDo">To do</option><option value="InProgress">In progress</option><option value="Completed">Completed</option></select>
+              <label class="sr-only" for="category-filter">Filter by category</label><select id="category-filter"><option value="">Any category</option><option value="Assignment">Assignment</option><option value="Exam">Exam</option><option value="Project">Project</option><option value="Personal">Personal</option></select>
+              <label class="sr-only" for="priority-filter">Filter by priority</label><select id="priority-filter"><option value="">Any priority</option><option value="High">High priority</option><option value="Medium">Medium priority</option><option value="Low">Low priority</option></select>
+              <button id="clear-filters" class="clear-filters" type="button">Clear</button>
+            </div>
+          </div>
+          <div id="task-list" class="task-list" aria-live="polite" aria-busy="false"></div>
+          <div id="task-empty" class="empty-state hidden"><div class="empty-illustration" aria-hidden="true"><span>✓</span><i></i><b></b></div><h3 id="empty-title">Your list is clear.</h3><p id="empty-copy">Add your first task and give your week a little shape.</p><button id="empty-add" class="button button-primary button-small" type="button"><span class="plus">+</span><span>Create your first task</span></button></div>
+          <div id="pagination" class="pagination hidden"><span id="page-summary">Showing 0 tasks</span><div><button id="page-prev" class="page-button" type="button" aria-label="Previous page">←</button><button id="page-next" class="page-button" type="button" aria-label="Next page">→</button></div></div>
+        </section>
+        <footer class="page-footer"><span>Made for busy brains and big dreams.</span><span>TaskMate <span class="brand-dot">·</span> <span id="footer-year"></span></span></footer>
+      </main>
+    </section>
+  </div>
+
+  <dialog id="task-dialog" class="task-dialog" aria-labelledby="dialog-title">
+    <form id="task-form" method="dialog">
+      <div class="dialog-heading"><div><span class="eyebrow">A LITTLE PLAN GOES A LONG WAY</span><h2 id="dialog-title">Add a task</h2><p>Give it a name and the rest can fall into place.</p></div><button id="dialog-close" class="icon-button close-button" type="button" aria-label="Close dialog">×</button></div>
+      <input id="task-id" type="hidden">
+      <div class="field"><label for="task-title">Task name <span class="required-star">*</span></label><input id="task-title" name="title" required maxlength="120" placeholder="e.g. Read chapter 4 for biology"><span class="field-hint">Keep it clear and easy to scan.</span></div>
+      <div class="field"><label for="task-description">Notes <span class="optional-label">Optional</span></label><textarea id="task-description" name="description" rows="3" maxlength="5000" placeholder="Add a few details or reminders..."></textarea></div>
+      <div class="form-grid">
+        <div class="field"><label for="task-due">Due date</label><input id="task-due" name="dueDate" type="date"></div>
+        <div class="field"><label for="task-category">Category</label><select id="task-category" name="category"><option value="Assignment">Assignment</option><option value="Exam">Exam</option><option value="Project">Project</option><option value="Personal">Personal</option></select></div>
+        <div class="field"><label for="task-priority">Priority</label><select id="task-priority" name="priority"><option value="Low">Low</option><option value="Medium" selected>Medium</option><option value="High">High</option></select></div>
+        <div class="field"><label for="task-status">Status</label><select id="task-status" name="status"><option value="ToDo">To do</option><option value="InProgress">In progress</option><option value="Completed">Completed</option></select></div>
+      </div>
+      <div id="task-form-message" class="form-message" role="alert" hidden></div>
+      <div class="dialog-actions"><button id="dialog-cancel" class="button button-quiet" type="button">Cancel</button><button id="task-save" class="button button-primary" type="submit">Save task <span aria-hidden="true">→</span></button></div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
