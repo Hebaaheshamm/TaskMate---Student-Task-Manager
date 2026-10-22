@@ -1,0 +1,12 @@
+.git
+.vs
+.dotnet-home
+.nuget
+work
+outputs
+**/bin
+**/obj
+**/App_Data
+**/*.db
+**/*.user
+.env

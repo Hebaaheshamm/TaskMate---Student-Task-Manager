@@ -1,0 +1,25 @@
+# .NET build output
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+
+# Local database and runtime files
+**/App_Data/*.db
+**/App_Data/*.db-*
+*.sqlite
+*.sqlite3
+
+# Local secrets and developer tooling/cache
+.env
+.env.*
+!.env.example
+.dotnet-home/
+.nuget/
+work/**
+**/taskmate-design-time.db
+
+# OS files
+.DS_Store
+Thumbs.db
