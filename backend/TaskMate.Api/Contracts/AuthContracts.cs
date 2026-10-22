@@ -3,13 +3,13 @@ using System.ComponentModel.DataAnnotations;
 namespace TaskMate.Api.Contracts;
 
 public sealed record RegisterRequest(
-    [property: Required, StringLength(80, MinimumLength = 2)] string Name,
-    [property: Required, EmailAddress, StringLength(254)] string Email,
-    [property: Required, StringLength(128, MinimumLength = 12)] string Password);
+    [param: Required, StringLength(80, MinimumLength = 2)] string Name,
+    [param: Required, EmailAddress, StringLength(254)] string Email,
+    [param: Required, StringLength(128, MinimumLength = 12)] string Password);
 
 public sealed record LoginRequest(
-    [property: Required, EmailAddress, StringLength(254)] string Email,
-    [property: Required, StringLength(128, MinimumLength = 1)] string Password);
+    [param: Required, EmailAddress, StringLength(254)] string Email,
+    [param: Required, StringLength(128, MinimumLength = 1)] string Password);
 
 public sealed record UserSummary(Guid Id, string Name, string Email);
 
