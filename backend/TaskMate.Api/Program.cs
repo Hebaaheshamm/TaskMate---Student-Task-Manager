@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Threading.RateLimiting;
 using TaskMate.Api.Data;
@@ -97,6 +98,17 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
+
+// During local development the frontend lives beside the backend project in
+// the repository's top-level Frontend directory. Published builds already
+// include those files under wwwroot, so keep the normal web root for them.
+var sourceFrontendPath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "..", "Frontend"));
+if (app.Environment.IsDevelopment() && Directory.Exists(sourceFrontendPath))
+{
+    app.Environment.WebRootFileProvider = new CompositeFileProvider(
+        app.Environment.WebRootFileProvider,
+        new PhysicalFileProvider(sourceFrontendPath));
+}
 
 app.UseExceptionHandler();
 app.UseForwardedHeaders();
