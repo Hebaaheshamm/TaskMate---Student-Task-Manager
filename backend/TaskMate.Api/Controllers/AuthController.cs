@@ -38,15 +38,20 @@ public sealed class AuthController(IAuthService authService) : ControllerBase
     public async Task<ActionResult<AuthResponse>> Login(LoginRequest request, CancellationToken cancellationToken)
     {
         var result = await authService.LoginAsync(request, cancellationToken);
-        if (result is null)
+        if (result.Response is null)
         {
             return Unauthorized(new ProblemDetails
             {
-                Title = "The email or password is incorrect.",
+                Title = result.FailureReason switch
+                {
+                    LoginFailureReason.AccountNotFound => "No account was found with this email. Please create an account first.",
+                    LoginFailureReason.IncorrectPassword => "The password is incorrect. Please try again.",
+                    _ => "We couldn't sign you in. Please try again."
+                },
                 Status = StatusCodes.Status401Unauthorized
             });
         }
-        return Ok(result);
+        return Ok(result.Response);
     }
 
     [HttpGet("me")]

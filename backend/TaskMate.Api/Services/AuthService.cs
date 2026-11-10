@@ -47,16 +47,23 @@ public sealed class AuthService(
         return CreateResponse(user);
     }
 
-    public async Task<AuthResponse?> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
+    public async Task<LoginResult> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
     {
         var user = await users.FindByNormalizedEmailAsync(NormalizeEmail(request.Email), cancellationToken);
-        var hash = user?.PasswordHash ?? DummyHash;
-        if (!passwordHasher.Verify(request.Password, hash) || user is null)
+        if (user is null)
         {
-            return null;
+            // Keep password-hash work similar for unknown emails while returning
+            // a clearer message to the user-facing application.
+            _ = passwordHasher.Verify(request.Password, DummyHash);
+            return new LoginResult(null, LoginFailureReason.AccountNotFound);
         }
 
-        return CreateResponse(user);
+        if (!passwordHasher.Verify(request.Password, user.PasswordHash))
+        {
+            return new LoginResult(null, LoginFailureReason.IncorrectPassword);
+        }
+
+        return new LoginResult(CreateResponse(user), null);
     }
 
     private AuthResponse CreateResponse(User user)
