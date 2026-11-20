@@ -1,11 +1,17 @@
+FROM node:24-alpine AS frontend-build
+WORKDIR /src/Frontend
+COPY Frontend/package.json ./
+RUN npm install
+COPY Frontend/ ./
+RUN npm run build
+
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-
 COPY backend/TaskMate.Api/TaskMate.Api.csproj backend/TaskMate.Api/
-COPY Frontend/ Frontend/
 RUN dotnet restore backend/TaskMate.Api/TaskMate.Api.csproj
 
 COPY . .
+COPY --from=frontend-build /src/backend/TaskMate.Api/wwwroot backend/TaskMate.Api/wwwroot
 RUN dotnet publish backend/TaskMate.Api/TaskMate.Api.csproj \
     --configuration Release \
     --output /out \

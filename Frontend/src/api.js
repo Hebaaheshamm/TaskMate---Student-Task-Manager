@@ -1,0 +1,5 @@
+const key="taskmate.accessToken";
+export const getToken=()=>sessionStorage.getItem(key);
+export const clearToken=()=>sessionStorage.removeItem(key);
+export async function api(path,{token=getToken(),...options}={}){const headers=new Headers(options.headers||{});if(options.body!==undefined)headers.set("Content-Type","application/json");if(token)headers.set("Authorization",`Bearer ${token}`);let response;try{response=await fetch(path,{...options,headers})}catch{throw new Error("Can't connect to TaskMate. Make sure the backend is running on port 5217.")}if(response.status===204)return null;const body=(response.headers.get("content-type")||"").includes("json")?await response.json():null;if(!response.ok){const validation=body?.errors&&Object.values(body.errors).flat().join(" ");throw new Error(validation||body?.detail||body?.title||"Something went wrong. Please try again.")}return body;}
+export async function authenticate(mode,values){const data=await api(`/api/auth/${mode}`,{method:"POST",body:JSON.stringify(values),token:null});sessionStorage.setItem(key,data.accessToken);return data.user;}

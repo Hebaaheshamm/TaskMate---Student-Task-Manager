@@ -1,6 +1,9 @@
 # .NET build output
 **/bin/
 **/obj/
+**/node_modules/
+**/wwwroot/
+!backend/TaskMate.Api/wwwroot/.gitkeep
 .vs/
 *.user
 *.suo

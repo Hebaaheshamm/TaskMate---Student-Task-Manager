@@ -1,0 +1,212 @@
+/* Workspace layout inspired by the reference dashboard, while keeping TaskMate's data and actions. */
+body:has(.shell) {
+  min-width: 320px;
+  background:
+    radial-gradient(circle at 50% 0%, #fff 0, #f7f7f9 48%, #f1f1f3 100%);
+}
+
+.shell {
+  width: min(1460px, calc(100% - 80px));
+  min-height: calc(100vh - 80px);
+  margin: 40px auto;
+  overflow: hidden;
+  border: 1px solid #e9e8ed;
+  border-radius: 34px;
+  background: #fff;
+  box-shadow: 0 22px 60px rgba(44, 38, 70, .10);
+}
+
+.shell aside {
+  padding: 42px 26px 28px;
+  border-right-color: #ecebf0;
+}
+
+.shell .logo {
+  color: #252331;
+  font-size: 23px;
+}
+
+.shell .caption {
+  margin-top: 58px;
+  font-size: 10px;
+  color: #9b98a5;
+}
+
+.shell nav { gap: 9px; }
+
+.shell nav button {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.shell nav .selected {
+  background: #f0efff;
+  box-shadow: inset 3px 0 #695bf1;
+}
+
+.main header {
+  height: 102px;
+  padding: 0 36px;
+  color: #393645;
+  font-size: 15px;
+}
+
+.main header > span {
+  position: relative;
+  padding-left: 65px;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.main header > span::before {
+  content: "☰";
+  position: absolute;
+  left: 0;
+  top: -14px;
+  display: grid;
+  width: 47px;
+  height: 47px;
+  place-items: center;
+  border-radius: 12px;
+  background: #695bf1;
+  color: white;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.main header > span::after {
+  content: "On track";
+  position: absolute;
+  left: 68px;
+  top: 28px;
+  color: #22af82;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.main header > div::before {
+  content: "⌕  Search tasks";
+  display: block;
+  padding: 11px 17px;
+  border: 1px solid #e8e7ec;
+  border-radius: 8px;
+  color: #8a8794;
+  font-size: 12px;
+}
+
+.main header .primary {
+  padding: 12px 18px;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.page {
+  max-width: none;
+  padding: 24px 34px 36px;
+}
+
+.welcome {
+  align-items: center;
+  min-height: 54px;
+  margin: 0 0 24px;
+  padding: 0 2px 15px;
+  border-bottom: 1px solid #ecebf0;
+}
+
+.welcome > div:first-child { display: flex; align-items: baseline; gap: 14px; }
+.welcome .eyebrow { display: none; }
+.welcome h1 { font-size: 15px; letter-spacing: 0; line-height: 1.25; }
+.welcome h1 br { display: none; }
+.welcome h1::before { content: "Dashboard"; }
+.welcome h1 { font-size: 0; }
+.welcome h1::before { font-size: 15px; }
+.welcome .muted { font-size: 12px; }
+.welcome .spark { width: 35px; height: 35px; border-radius: 9px; font-size: 18px; }
+
+.cards { gap: 20px; }
+.card {
+  min-height: 148px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(35, 29, 66, .025);
+}
+.card > div { gap: 9px; font-size: 17px; color: #1f1d2a; }
+.card i { display: none; }
+.card strong { margin-top: 38px; font-size: 25px; }
+.card small { font-size: 11px; }
+.card:nth-child(2) { border-top: 3px solid #b78ae9; }
+.card:nth-child(3) { border-top: 3px solid #f2a23a; }
+.card:nth-child(4) { border-top: 3px solid #ec6d86; }
+
+.insights {
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+}
+.insights article {
+  min-height: 248px;
+  padding: 24px 20px;
+  border-radius: 10px;
+}
+.insights article:first-child {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #fff 58%, #fbf9ff);
+}
+.insights article:first-child::after {
+  content: "";
+  position: absolute;
+  right: 45px;
+  bottom: 34px;
+  width: 136px;
+  height: 136px;
+  border-radius: 50%;
+  background: conic-gradient(#5d4b81 calc(var(--completion, 65) * 1%), #c18bea 0);
+  box-shadow: inset 0 0 0 29px #fff;
+}
+.title-row strong { font-size: 0; }
+.title-row strong::after { content: "Progress"; font-size: 12px; color: #847f93; }
+.progress { width: calc(100% - 196px); height: 11px; margin: 45px 0 12px; }
+.insights article:first-child > .muted { width: calc(100% - 196px); font-size: 12px; }
+.insights article:nth-child(2) { position: relative; overflow: hidden; }
+.insights article:nth-child(2)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 82px;
+  background: linear-gradient(145deg, transparent 0 18%, #c08bea 18% 41%, #624d82 41% 57%, #c08bea 57% 73%, #624d82 73% 100%);
+  opacity: .9;
+  clip-path: polygon(0 90%, 18% 38%, 36% 52%, 57% 16%, 77% 35%, 100% 0, 100% 100%, 0 100%);
+}
+.large { font-size: 42px; }
+
+.tasks { border-radius: 10px; }
+.section-title { padding: 22px 22px 16px; }
+.filters { padding: 0 22px 16px; background: #fcfcfd; }
+.task { grid-template-columns: 26px minmax(180px, 1fr) 94px 115px 115px 110px; padding: 14px 22px; }
+.task:hover { background: #fbfaff; }
+
+@media (max-width: 900px) {
+  .shell { width: 100%; min-height: 100vh; margin: 0; border: 0; border-radius: 0; }
+  .main header { height: 78px; padding: 0 18px; }
+  .main header > span { padding-left: 0; font-size: 0; }
+  .main header > span::before { position: static; font-size: 20px; }
+  .main header > span::after { display: none; }
+  .main header > div::before { display: none; }
+}
+
+@media (max-width: 560px) {
+  .page { padding: 18px 14px 28px; }
+  .cards { gap: 10px; }
+  .card { min-height: 120px; padding: 14px; }
+  .card > div { font-size: 12px; }
+  .card strong { margin-top: 24px; }
+  .insights article { min-height: 210px; }
+  .insights article:first-child::after { right: 22px; bottom: 24px; width: 100px; height: 100px; box-shadow: inset 0 0 0 22px #fff; }
+  .progress, .insights article:first-child > .muted { width: calc(100% - 125px); }
+}

@@ -28,6 +28,7 @@ public sealed class TaskService(ITaskRepository tasks, TimeProvider timeProvider
             UserId = userId,
             Title = request.Title.Trim(),
             Description = NormalizeDescription(request.Description),
+            StartDate = request.StartDate,
             DueDate = request.DueDate,
             Priority = request.Priority,
             Status = request.Status,
@@ -49,6 +50,7 @@ public sealed class TaskService(ITaskRepository tasks, TimeProvider timeProvider
 
         task.Title = request.Title.Trim();
         task.Description = NormalizeDescription(request.Description);
+        task.StartDate = request.StartDate;
         task.DueDate = request.DueDate;
         task.Priority = request.Priority;
         task.Status = request.Status;
@@ -79,6 +81,7 @@ public sealed class TaskService(ITaskRepository tasks, TimeProvider timeProvider
         task.Id,
         task.Title,
         task.Description,
+        task.StartDate,
         task.DueDate,
         task.Priority,
         task.Status,

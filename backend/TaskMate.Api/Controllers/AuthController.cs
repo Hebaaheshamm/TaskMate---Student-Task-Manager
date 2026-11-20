@@ -57,15 +57,50 @@ public sealed class AuthController(IAuthService authService) : ControllerBase
     [HttpGet("me")]
     [Authorize]
     [ProducesResponseType<UserSummary>(StatusCodes.Status200OK)]
-    public ActionResult<UserSummary> Me()
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<UserSummary>> Me(CancellationToken cancellationToken)
     {
-        var id = User.FindFirstValue("sub");
-        var name = User.FindFirstValue("name");
-        var email = User.FindFirstValue("email");
-        if (!Guid.TryParse(id, out var userId) || name is null || email is null)
+        var sub = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(sub, out var userId))
         {
             return Unauthorized();
         }
-        return Ok(new UserSummary(userId, name, email));
+
+        var user = await authService.GetCurrentUserAsync(userId, cancellationToken);
+        if (user is null)
+        {
+            return Unauthorized();
+        }
+
+        return Ok(user);
+    }
+
+    [HttpPut("me")]
+    [Authorize]
+    [ProducesResponseType<UserSummary>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<UserSummary>> UpdateMe(UpdateProfileRequest request, CancellationToken cancellationToken)
+    {
+        var sub = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(sub, out var userId)) return Unauthorized();
+        var user = await authService.UpdateProfileAsync(userId, request, cancellationToken);
+        return user is null
+            ? Conflict(new ProblemDetails { Title = "This email address is already in use.", Status = StatusCodes.Status409Conflict })
+            : Ok(user);
+    }
+
+    [HttpPost("change-password")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> ChangePassword(ChangePasswordRequest request, CancellationToken cancellationToken)
+    {
+        var sub = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(sub, out var userId)) return Unauthorized();
+        return await authService.ChangePasswordAsync(userId, request, cancellationToken)
+            ? NoContent()
+            : BadRequest(new ProblemDetails { Title = "Your current password is incorrect.", Status = StatusCodes.Status400BadRequest });
     }
 }

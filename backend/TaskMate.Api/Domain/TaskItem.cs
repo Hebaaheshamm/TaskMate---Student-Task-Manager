@@ -7,6 +7,7 @@ public sealed class TaskItem
     public User? User { get; set; }
     public string Title { get; set; } = string.Empty;
     public string? Description { get; set; }
+    public DateOnly? StartDate { get; set; }
     public DateOnly? DueDate { get; set; }
     public TaskPriority Priority { get; set; } = TaskPriority.Medium;
     public TaskState Status { get; set; } = TaskState.ToDo;

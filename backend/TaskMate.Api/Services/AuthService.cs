@@ -66,6 +66,35 @@ public sealed class AuthService(
         return new LoginResult(CreateResponse(user), null);
     }
 
+    public async Task<UserSummary?> GetCurrentUserAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await users.FindByIdAsync(userId, cancellationToken);
+        return user is null ? null : new UserSummary(user.Id, user.Name, user.Email);
+    }
+
+    public async Task<UserSummary?> UpdateProfileAsync(Guid userId, UpdateProfileRequest request, CancellationToken cancellationToken)
+    {
+        var user = await users.FindByIdAsync(userId, cancellationToken);
+        if (user is null) return null;
+        var normalizedEmail = NormalizeEmail(request.Email);
+        var existing = await users.FindByNormalizedEmailAsync(normalizedEmail, cancellationToken);
+        if (existing is not null && existing.Id != userId) return null;
+        user.Name = request.Name.Trim();
+        user.Email = request.Email.Trim();
+        user.NormalizedEmail = normalizedEmail;
+        await users.SaveChangesAsync(cancellationToken);
+        return new UserSummary(user.Id, user.Name, user.Email);
+    }
+
+    public async Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordRequest request, CancellationToken cancellationToken)
+    {
+        var user = await users.FindByIdAsync(userId, cancellationToken);
+        if (user is null || !passwordHasher.Verify(request.CurrentPassword, user.PasswordHash)) return false;
+        user.PasswordHash = passwordHasher.Hash(request.NewPassword);
+        await users.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
     private AuthResponse CreateResponse(User user)
     {
         var (token, expiresAtUtc) = tokenService.CreateAccessToken(user);

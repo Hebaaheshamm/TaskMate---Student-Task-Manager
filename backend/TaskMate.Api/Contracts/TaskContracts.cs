@@ -6,6 +6,7 @@ namespace TaskMate.Api.Contracts;
 public sealed record CreateTaskRequest(
     [param: Required, StringLength(120, MinimumLength = 1)] string Title,
     [param: StringLength(5000)] string? Description = null,
+    DateOnly? StartDate = null,
     DateOnly? DueDate = null,
     [param: EnumDataType(typeof(TaskPriority))] TaskPriority Priority = TaskPriority.Medium,
     [param: EnumDataType(typeof(TaskState))] TaskState Status = TaskState.ToDo,
@@ -14,6 +15,7 @@ public sealed record CreateTaskRequest(
 public sealed record UpdateTaskRequest(
     [param: Required, StringLength(120, MinimumLength = 1)] string Title,
     [param: StringLength(5000)] string? Description,
+    DateOnly? StartDate,
     DateOnly? DueDate,
     [param: EnumDataType(typeof(TaskPriority))] TaskPriority Priority,
     [param: EnumDataType(typeof(TaskState))] TaskState Status,
@@ -34,6 +36,7 @@ public sealed record TaskResponse(
     Guid Id,
     string Title,
     string? Description,
+    DateOnly? StartDate,
     DateOnly? DueDate,
     TaskPriority Priority,
     TaskState Status,

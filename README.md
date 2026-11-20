@@ -2,7 +2,7 @@
 
 TaskMate is a full-stack task manager for students. Register an account, organize assignments, exams, projects, and personal tasks, and keep an eye on what is due soon or overdue.
 
-It uses an ASP.NET Core 10 Web API, EF Core 10, SQLite, JWT bearer authentication, and a responsive HTML/CSS/JavaScript frontend served by the API. No separate frontend server, Node.js, or npm install is needed.
+It uses an ASP.NET Core 10 Web API, EF Core 10, SQLite, JWT bearer authentication, and a React + Vite frontend.
 
 ## Features
 
@@ -11,7 +11,7 @@ It uses an ASP.NET Core 10 Web API, EF Core 10, SQLite, JWT bearer authenticatio
 - Create, view, edit, complete, and delete tasks with due dates, priority, status, category, and notes.
 - Dashboard totals for all tasks, completed tasks, deadlines due within seven days, overdue tasks, and completion percentage.
 - Server-side title search, status/category/priority filters, upcoming date filters, and pagination.
-- Responsive dashboard with mobile navigation and `/` as a keyboard shortcut to search.
+- Responsive React dashboard with task search, status filters, and mobile navigation.
 - EF Core migrations applied at startup, migration sources, and a generated SQL setup script.
 - Per-IP registration/login rate limiting, security headers, production JWT secret checks, and optional trusted proxy support.
 - Docker image and Compose setup with persistent SQLite storage.
@@ -19,20 +19,30 @@ It uses an ASP.NET Core 10 Web API, EF Core 10, SQLite, JWT bearer authenticatio
 ## Requirements
 
 - .NET SDK 10.0 or later.
+- Node.js 24 or later for the React frontend.
 - Docker Engine with Docker Compose v2 for container deployment.
 
-The frontend uses browser APIs and has no JavaScript package dependencies.
+The frontend is managed with npm and uses React, React DOM, and Vite.
 
 ## Run locally
 
-From the repository root:
+From two terminals in the repository root:
 
 ```powershell
 dotnet restore backend/TaskMate.Api/TaskMate.Api.csproj
 dotnet run --project backend/TaskMate.Api/TaskMate.Api.csproj
 ```
 
-Or run `scripts/run.ps1` on Windows or `sh scripts/run.sh` on macOS/Linux. The launch profile listens at **http://localhost:5117**. Open the address, create an account, and add your first task. The database is created at `backend/TaskMate.Api/App_Data/taskmate.db` on first startup.
+Then start the React development server:
+
+```powershell
+npm install --prefix Frontend
+npm run dev --prefix Frontend
+```
+
+Open **http://localhost:5173**. The Vite server forwards `/api` requests to the API at `http://localhost:5217`. The database is created at `backend/TaskMate.Api/App_Data/taskmate.db` on first startup.
+
+To serve the compiled React application from ASP.NET Core, run `npm run build --prefix Frontend` and then open the API URL.
 
 The development JWT signing key in `appsettings.json` is for local use only. Production startup refuses to use it. Set a unique key of at least 32 bytes before starting in Production:
 
@@ -161,7 +171,7 @@ TaskMate/
 │   ├── Services/             # Authentication, hashing, JWT, task logic
 │   ├── appsettings.json
 │   └── TaskMate.Api.csproj
-├── Frontend/                 # Responsive browser UI
+├── Frontend/                 # React + Vite browser UI
 ├── database/schema.sql       # SQL generated from the initial migration
 ├── scripts/                  # Local run helpers
 ├── Dockerfile

@@ -1,10 +1,10 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Threading.RateLimiting;
 using TaskMate.Api.Data;
@@ -43,7 +43,13 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 builder.Services.AddProblemDetails();
-builder.Services.AddDbContext<TaskMateDbContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "App_Data", "keys")));
+builder.Services.AddDbContext<TaskMateDbContext>(options =>
+{
+    options.UseSqlite(connectionString);
+    options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+});
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -99,17 +105,6 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
-// During local development the frontend lives beside the backend project in
-// the repository's top-level Frontend directory. Published builds already
-// include those files under wwwroot, so keep the normal web root for them.
-var sourceFrontendPath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "..", "Frontend"));
-if (app.Environment.IsDevelopment() && Directory.Exists(sourceFrontendPath))
-{
-    app.Environment.WebRootFileProvider = new CompositeFileProvider(
-        app.Environment.WebRootFileProvider,
-        new PhysicalFileProvider(sourceFrontendPath));
-}
-
 app.UseExceptionHandler();
 app.UseForwardedHeaders();
 if (app.Environment.IsProduction())
@@ -140,6 +135,14 @@ using (var scope = app.Services.CreateScope())
 {
     var database = scope.ServiceProvider.GetRequiredService<TaskMateDbContext>();
     await database.Database.MigrateAsync();
+    try
+    {
+        await database.Database.ExecuteSqlRawAsync("ALTER TABLE Tasks ADD COLUMN StartDate TEXT;");
+    }
+    catch
+    {
+        // Column already exists
+    }
 }
 
 await app.RunAsync();
